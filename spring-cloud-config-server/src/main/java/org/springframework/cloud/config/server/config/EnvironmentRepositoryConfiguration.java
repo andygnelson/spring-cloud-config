@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.oracle.bmc.objectstorage.ObjectStorageClient;
 import io.micrometer.observation.ObservationRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.client.HttpClient;
@@ -74,6 +75,9 @@ import org.springframework.cloud.config.server.environment.MultipleJGitEnvironme
 import org.springframework.cloud.config.server.environment.NativeEnvironmentProperties;
 import org.springframework.cloud.config.server.environment.NativeEnvironmentRepository;
 import org.springframework.cloud.config.server.environment.NativeEnvironmentRepositoryFactory;
+import org.springframework.cloud.config.server.environment.OciObjectStorageEnvironmentProperties;
+import org.springframework.cloud.config.server.environment.OciObjectStorageEnvironmentRepository;
+import org.springframework.cloud.config.server.environment.OciObjectStorageEnvironmentRepositoryFactory;
 import org.springframework.cloud.config.server.environment.RedisEnvironmentProperties;
 import org.springframework.cloud.config.server.environment.RedisEnvironmentRepository;
 import org.springframework.cloud.config.server.environment.RedisEnvironmentRepositoryFactory;
@@ -124,6 +128,7 @@ import org.springframework.vault.core.VaultTemplate;
 		GitRepositoryConfiguration.class, RedisRepositoryConfiguration.class, GoogleCloudSourceConfiguration.class,
 		AwsS3RepositoryConfiguration.class, AwsSecretsManagerRepositoryConfiguration.class,
 		AwsParameterStoreRepositoryConfiguration.class, GoogleSecretManagerRepositoryConfiguration.class,
+		OciObjectStorageEnvironmentProperties.class,
 		// DefaultRepositoryConfiguration must be last
 		DefaultRepositoryConfiguration.class })
 public class EnvironmentRepositoryConfiguration {
@@ -357,6 +362,18 @@ public class EnvironmentRepositoryConfiguration {
 	}
 
 	@Configuration(proxyBeanMethods = false)
+	@ConditionalOnClass(ObjectStorageClient.class)
+	static class OciObjectStorageFactoryConfig {
+
+		@Bean
+		public OciObjectStorageEnvironmentRepositoryFactory ociObjEnvironmentRepositoryFactory(
+				ConfigServerProperties server) {
+			return new OciObjectStorageEnvironmentRepositoryFactory(server);
+		}
+
+	}
+
+	@Configuration(proxyBeanMethods = false)
 	static class NativeFactoryConfig {
 
 		@Bean
@@ -566,6 +583,20 @@ class GoogleSecretManagerRepositoryConfiguration {
 	public GoogleSecretManagerEnvironmentRepository googleSecretManagerEnvironmentRepository(
 			GoogleSecretManagerEnvironmentRepositoryFactory factory,
 			GoogleSecretManagerEnvironmentProperties environmentProperties) throws Exception {
+		return factory.build(environmentProperties);
+	}
+
+}
+
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnClass(ObjectStorageClient.class)
+class OciObjectStorageRepositoryConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean(OciObjectStorageEnvironmentRepository.class)
+	public OciObjectStorageEnvironmentRepository ociObjEnvironmentRepository(
+			OciObjectStorageEnvironmentRepositoryFactory factory,
+			OciObjectStorageEnvironmentProperties environmentProperties) throws Exception {
 		return factory.build(environmentProperties);
 	}
 

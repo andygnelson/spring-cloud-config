@@ -238,6 +238,40 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>excludeTestsBrokenOnWindows</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>**/Aws*.java</exclude>
+								<exclude>**/BootstrapConfigServerIntegrationTests.java</exclude>
+								<exclude>**/ConfigClientOnIntegrationTests.java</exclude>
+								<exclude>**/NativeConfigServerIntegrationTests.java</exclude>
+								<exclude>**/ObservationIntegrationTests.java</exclude>
+								<exclude>**/RefreshableConfigServerIntegrationTests.java</exclude>
+								<exclude>**/VanillaConfigServerIntegrationTests.java</exclude>
+								<exclude>**/JGitEnvironmentRepositoryConcurrencyTests.java</exclude>
+								<exclude>**/JGitEnvironmentRepositoryIntegrationTests.java</exclude>
+								<exclude>**/JGitEnvironmentRepositoryTests.java</exclude>
+								<exclude>**/MultipleJGitEnvironmentApplicationPlaceholderRepositoryTests.java</exclude>
+								<exclude>**/MultipleJGitEnvironmentLabelPlaceholderRepositoryTests.java</exclude>
+								<exclude>**/MultipleJGitEnvironmentProfilePlaceholderRepositoryTests.java</exclude>
+								<exclude>**/MultipleJGitEnvironmentRepositoryIntegrationTests.java</exclude>
+								<exclude>**/MultipleJGitEnvironmentRepositoryTests.java</exclude>
+								<exclude>**/JGitEnvironmentRepositoryIntegrationTests.java</exclude>
+								<exclude>**/JGitEnvironmentRepositoryIntegrationTests.java</exclude>
+								<exclude>**/GenericResourceRepositoryTests.java</exclude>
+								<exclude>**/ConfigDataRetryIntegrationTests.java</exclude>
+								<exclude>**/Redis*.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<build>
